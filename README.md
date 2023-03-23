@@ -1,5 +1,7 @@
 # IVO
 
+TODO format readme
+
 ## Project structure
 keywords: Node.js, Typescript, Lerna, BullMQ, Cosmos DB
 
