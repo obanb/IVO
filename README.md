@@ -12,13 +12,11 @@ keywords: Node.js, Typescript, Lerna, BullMQ, Cosmos DB
 **MyStay**:  gateway for incoming JSON (MyStay) into the application structure  
 **Personalisation**: application connected via queue for processing in personalization  
 **Monitoring**: separate application for monitoring and jobs  
-...TBD
 
 **Libs**
 
 **Common**: common utils, types, loggers etc.  
 **Database**: database connectors, repos, utils  
-...TBD
 
 ## Technical guide
 
