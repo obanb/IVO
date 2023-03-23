@@ -1,0 +1,22 @@
+{
+  "printWidth": 160,
+  "tabWidth": 4,
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "parser": "typescript"
+      }
+    },
+    {
+      "files": "*.graphql",
+      "options": {
+        "parser": "graphql"
+      }
+    }
+  ]
+}
