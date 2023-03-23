@@ -39,7 +39,7 @@ MongoDB driver:
  -  for https://www.mongodb.com/docs/drivers/node/current/compatibility/ the latest driver for compatibility was chosen for its possible compatibility with server version 4.2  
  - 5+ MongoDB features must be avoided  
  - due to the above, Mongoose was not used, but a pure Node.js driver with custom type checking  
- - je nutno pocitat s Cosmos DB "request units" a pricingem  https://cosmos.azure.com/capacitycalculator/  https://azure.microsoft.com/en-us/pricing/details/cosmos-db/autoscale-provisioned/  
+ - Cosmos DB "request units" and pricing must be considered https://cosmos.azure.com/capacitycalculator/ https://azure.microsoft.com/en-us/pricing/details/cosmos-db/autoscale-provisioned/  
  - GridFS storage integrated in the project, for storing objects larger than **2MB** (current limit of Cosmos DB)
 
 
