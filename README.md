@@ -16,8 +16,8 @@ keywords: Node.js, Typescript, Lerna, BullMQ, Cosmos DB
 
 **Libs**
 
-**Common** - common utils, types, loggers etc.  
-**Database** - database connectors, repos, utils  
+**Common**: common utils, types, loggers etc.  
+**Database**: database connectors, repos, utils  
 ...TBD
 
 ## Technical guide
