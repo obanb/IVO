@@ -2,7 +2,7 @@
 
 
 ## Project structure
-keywords: Node.js, Typescript, Lerna, BullMQ, Cosmos DB
+keywords: Node.js, Typescript, Lerna, BullMQ, Cosmos DB, Reddis
 
 **Packages:**
 
@@ -54,6 +54,9 @@ BullMQ was chosen as message broker - because of good compatibility with Node.js
  - possibility of resending  
  - monitoring via @bull-board lib https://github.com/felixmosh/bull-board   
  - possible to monitor/resend communication via GUI on **/bull/admin** URL from Receiver HTTP server  
+
+**Logging**
+TBD
 
 ## App schema
 TODO
