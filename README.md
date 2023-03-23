@@ -45,11 +45,22 @@ MongoDB driver:
 
 
 **BullMQ** 
-TBD
+
+BullMQ was chosen as message broker - because of good compatibility with Node.js, Typescript and prime integration to Redis server https://docs.bullmq.io/ 
+
+ - push/pull aka producer/consumer schema  
+ - buildin ioredis integration (redis driver)  
+ - death letter queue functionality  
+ - possibility of resending  
+ - monitoring via @bull-board lib https://github.com/felixmosh/bull-board   
+ - possible to monitor/resend communication via GUI on **/bull/admin** URL from Receiver HTTP server  
 
 ## App schema
 TODO
 
+## API
+use https://swagger.io/ as HTTP API browser  
+ - URL: /api/docs 
 ## Install, run, cmds, scripts..
 
 TODO.
