@@ -3,13 +3,14 @@
   "include": [
     "src/**/*"
   ],
+  "exclude": ["node_modules"],
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "lib",
     "rootDir": "src",
     "baseUrl": ".",
     "strict": true,
     "strictNullChecks": true,
-    "include": ["src"],
-    "exclude": ["node_modules"]
+    "declaration": true,
+    "declarationDir": "lib/types",
   }
 }

@@ -1,1 +1,1 @@
-export * from './bullmq';
+export * from './logger';

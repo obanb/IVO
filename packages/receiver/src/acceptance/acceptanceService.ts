@@ -8,7 +8,7 @@ import {Queues, uuid, WithDatatypeSchema} from 'common';
  * @param personalisationQueue The queue for the personalisation service.
  * @returns The acceptance service.
  */
-export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queue<Queues["personalisation"]["jobData"]>) => {
+export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queue<Queues['personalisation']['jobData']>) => {
     return {
         receive: async (data: unknown) => {
             log.info(`receive`);
@@ -18,7 +18,10 @@ export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queu
 
             log.info(`alsRequestId: ${requestId}, queue requestId: ${requestId}`);
 
-            await repo.rawSave(data);
+            // await repo.rawSave(data);
+            // await repo.rawSaveGrid(data);
+
+            await repo.chunkSave(data);
 
             const parse = WithDatatypeSchema.safeParse(data);
 
@@ -26,13 +29,20 @@ export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queu
                 log.info(`parse success, datatype: ${parse.data.datatype}`);
 
                 await personalisationQueue.add('personalisation', {
-                   datatype: parse.data.datatype,
-                   requestId,
-                   data: parse.data,
+                    datatype: parse.data.datatype,
+                    requestId,
+                    data: parse.data,
                 });
             } else {
                 log.info(`unknown 'datatype' detected`);
             }
+
+            //
+            // try {
+            //     const call = await mystayService().call(data);
+            // }catch(e){
+            //     // zapsat chybu
+            // }
         },
     };
 };

@@ -1,0 +1,48 @@
+{
+  "name": "receiver",
+  "version": "0.0.0",
+  "description": "application gate",
+  "keywords": [
+    "application",
+    "gate",
+    "receiver",
+    "backend",
+    "node"
+  ],
+  "author": "obanb <ondrej.basista@apitree.cz>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/receiver.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "start": "tsc && node --trace-warnings --enable-source-maps lib/receiver.js",
+    "test": "node ./__tests__/receiver.test.js",
+    "lint-only": "eslint --quiet --ext .ts src/"
+  },
+  "dependencies": {
+    "@bull-board/api": "^5.0.0",
+    "@bull-board/express": "^5.0.0",
+    "axios": "^1.3.4",
+    "axios-retry": "^3.4.0",
+    "bullmq": "^3.10.1",
+    "common": "^0.0.0",
+    "database": "^0.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "redis": "^4.6.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/redis-info": "^3.0.0",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3"
+  }
+}

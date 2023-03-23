@@ -1,44 +1,31 @@
-import {GridFSBucket} from 'mongodb';
-import {Types} from 'mongoose';
-import * as mongoose from 'mongoose';
+import {Db, GridFSBucket, ObjectId} from 'mongodb';
 import {Readable} from 'stream';
-import {getLogger} from '../../utils';
-import {PRVNI_PARALELNI_PRIPOJENI_FORM_COLLECTION_NAME} from './PrvniParalelniPripojeniForm';
-
-const log = getLogger('odstavky.PrvniParalelniPripojeniGridFs');
+import {log} from '../logger';
 
 let bucket: GridFSBucket;
-const getBucket = () => {
+const getBucket = (db: Db, bucketName: string) => {
     if (!bucket) {
-        bucket = new GridFSBucket(mongoose.connection.db, {bucketName: PRVNI_PARALELNI_PRIPOJENI_FORM_COLLECTION_NAME});
+        bucket = new GridFSBucket(db, {bucketName: bucketName});
     }
     return bucket;
 };
 
-export const PrvniParalelniPripojeniGridFs = {
-    delete: (id: Types.ObjectId) => {
-        const bucket = getBucket();
-        return new Promise<void>((resolve, reject) => {
-            bucket.delete(id, (err) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve();
-            });
-        });
+export const gridFsService = (db: Db) => ({
+    delete: async (id: ObjectId, bucketName: string) => {
+        const bucket = getBucket(db, bucketName);
+        await bucket.delete(id);
     },
-    findOne: (filter: object) => {
-        const bucket = getBucket();
+    findOne: (filter: object, bucketName: string) => {
+        const bucket = getBucket(db, bucketName);
         const cursor = bucket.find(filter);
         return cursor.next();
     },
-    saveImage: (imageStream: Readable, bucketFileName: string) => {
-        log.debug(`save image '${bucketFileName}'`);
-        const bucket = getBucket();
-        return new Promise<Types.ObjectId>((resolve, reject) => {
+    saveImage: (imageStream: Readable, bucketFileName: string, bucketName: string) => {
+        log.info(`save image '${bucketFileName}'`);
+        const bucket = getBucket(db, bucketName);
+        return new Promise<ObjectId>((resolve, reject) => {
             const writable = bucket.openUploadStream(bucketFileName);
-            writable.on('finish', <T extends {_id: Types.ObjectId}>(doc: T) => {
+            writable.on('finish', <T extends {_id: ObjectId}>(doc: T) => {
                 log.debug(`${bucketFileName} saved successfully, id: ${doc._id}`);
                 resolve(doc._id);
             });
@@ -53,11 +40,13 @@ export const PrvniParalelniPripojeniGridFs = {
             imageStream.pipe(writable);
         });
     },
-    downloadImage: (id: Types.ObjectId) => {
-        const stream = getBucket().openDownloadStream(id);
+    downloadImage: (id: ObjectId, bucketName: string) => {
+        const stream = getBucket(db, bucketName).openDownloadStream(id);
         stream.on('error', (err) => {
             log.error(`download image failed, err: ${err?.stack}`);
         });
         return stream;
     },
-};
+});
+
+export type GridFsService = ReturnType<typeof gridFsService>;

@@ -70,18 +70,5 @@ module.exports = {
         'import/first': 'error',
         'import/newline-after-import': 'error',
         'import/no-duplicates': 'error',
-
-        'root-library-imports': [
-            'error',
-            [
-                '@eon.cz/gemini11-common',
-                '@eon.cz/gemini11-database',
-                '@eon.cz/gemini11-graphql',
-                '@eon.cz/gemini11-graphql-openapi',
-                '@eon.cz/gemini11-logger',
-                '@eon.cz/gemini11-sap-adapter',
-                '@eon.cz/gemini11-tools',
-            ],
-        ],
     },
 };

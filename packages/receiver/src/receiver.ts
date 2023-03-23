@@ -1,2 +1,3 @@
+import {startServer} from './server';
 
-console.log("ahoj aplikace")
+void startServer();

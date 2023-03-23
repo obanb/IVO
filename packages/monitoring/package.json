@@ -1,0 +1,27 @@
+{
+  "name": "monitoring",
+  "version": "0.0.0",
+  "private": true,
+  "description": "monitoring, bullmq dashboard, jobs",
+  "author": "obanb <ondrej.basista@apitree.cz>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/monitoring.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "node ./__tests__/monitoring.test.js",
+    "start": "tsc && node --trace-warnings --enable-source-maps lib/monitoring.js"
+  },
+  "dependencies": {
+    "common": "^0.0.0",
+    "database": "^0.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}

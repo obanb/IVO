@@ -11,12 +11,6 @@
       "options": {
         "parser": "typescript"
       }
-    },
-    {
-      "files": "*.graphql",
-      "options": {
-        "parser": "graphql"
-      }
     }
   ]
 }

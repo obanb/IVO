@@ -1,0 +1,32 @@
+{
+  "name": "common",
+  "version": "0.0.0",
+  "description": "common lib",
+  "keywords": [
+    "common",
+    "lib"
+  ],
+  "author": "obanb <ondrej.basista@apitree.cz>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/common.js",
+  "types": "./lib/types/common.d.ts",
+  "typings": "./lib/types/common.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "node ./__tests__/common.test.js",
+    "build": "tsc",
+    "lint-only": "eslint --quiet --ext .ts src/"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "winston": "^3.8.2",
+    "zod": "^3.21.4"
+  }
+}
