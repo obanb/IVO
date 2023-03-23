@@ -44,7 +44,9 @@ MongoDB driver:
  - je nutno pocitat s Cosmos DB "request units" a pricingem  https://cosmos.azure.com/capacitycalculator/  https://azure.microsoft.com/en-us/pricing/details/cosmos-db/autoscale-provisioned/  
  - GridFS storage integrated in the project, for storing objects larger than **2MB** (current limit of Cosmos DB)
 
-BullMQ
+
+
+**BullMQ** 
 TBD
 
 ## App schema
