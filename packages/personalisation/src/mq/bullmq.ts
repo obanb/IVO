@@ -1,6 +1,8 @@
 import {Job, Worker} from 'bullmq';
 import {log, loggerAls} from '../logger';
 import {Queues} from 'common';
+import {AckRepo} from 'database';
+import {ObjectId} from 'mongodb';
 
 const redisCfg = {
     host: process.env.REDIS_HOST,
@@ -8,7 +10,7 @@ const redisCfg = {
 };
 
 export const bullmq = {
-    subscribe: async () => {
+    subscribe: async (repo: AckRepo) => {
         const queueName = 'personalisation';
 
         log.info(`Starting worker - subscribe to queue: ${queueName}`);
@@ -24,6 +26,8 @@ export const bullmq = {
                     // TODO - logovat 15MB zrejme chtit nebudu
                     log.info(`MQ msg received: ${JSON.stringify(job.data)}`);
                     log.info(`MQ msg requestId: ${requestId}`);
+
+                    await repo.ackPersonalisation(new ObjectId(job.data.databaseId));
                 });
                 return 'ok';
             },
@@ -42,5 +46,9 @@ export const bullmq = {
         if (pw.isRunning()) {
             log.info(`Worker listening - queue: ${queueName}`);
         }
+
+        return {
+            personalisationWorker: pw,
+        };
     },
 };

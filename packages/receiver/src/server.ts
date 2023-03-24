@@ -1,5 +1,4 @@
-import {Request, Response} from 'express';
-import {connect, repo} from 'database';
+import {connect, messageRepo} from 'database';
 import {acceptanceService} from './acceptance';
 import {Queue} from 'bullmq';
 import {log, loggerAls} from './logger';
@@ -7,8 +6,11 @@ import {randomUUID} from 'crypto';
 import {ExpressAdapter} from '@bull-board/express';
 import {createBullBoard} from '@bull-board/api';
 import {BullMQAdapter} from '@bull-board/api/bullMQAdapter';
-import {Queues} from 'common';
+import {checkHealth, Queues, ServerStatus, withGracefulShutdown} from 'common';
 import {serve, setup} from 'swagger-ui-express';
+import {Server} from 'node:http';
+import {swagger} from './swagger';
+import {router} from './router';
 
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -27,12 +29,15 @@ const redisCfg = {
 
 const bullAdminRoute = '/bull/admin';
 
+const serverStatus: ServerStatus = {isAlive: true, server: undefined};
+
 export const startServer = async () => {
+    // db init
     const cosmosDbClient = connect.getDbClient().cosmosDb();
     const client = await cosmosDbClient.connect();
-
     const db = client.db('orea');
 
+    // queues init
     const personalisationQueue = new Queue<Queues['personalisation']['jobData']>('personalisation', {
         connection: {
             host: redisCfg.host,
@@ -40,15 +45,19 @@ export const startServer = async () => {
         },
     });
 
-    const receiverRepository = repo.receiver(db);
+    const msgRepo = messageRepo(db);
+    const as = acceptanceService(msgRepo, personalisationQueue);
 
-    const as = acceptanceService(receiverRepository, personalisationQueue);
-
-    app.listen(port, () => {
-        log.info(`[server]: Server is running at http://localhost:${port}`);
+    serverStatus.server = await new Promise<Server>((resolve) => {
+        const httpServer = app.listen(port, () => {
+            log.info(`[server]: Server is running at http://localhost:${port}`);
+            resolve(httpServer);
+        });
     });
 
     app.use(express.json({limit: '50mb'}));
+
+    withGracefulShutdown(Number(process.env.GRACEFUL_SHUTDOWN_PERIOD) || 30, serverStatus, log);
 
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath(bullAdminRoute);
@@ -67,50 +76,9 @@ export const startServer = async () => {
         }),
     );
 
-    /**
-     * @openapi
-     *  /api/hoteltime:
-     *    post:
-     *      description: HotelTime receiver gateway
-     *      requestBody:
-     *        required: true
-     *        content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                datatype:
-     *                  type: string
-     *                  example: "Created"
-     *      responses:
-     *        200:
-     *          description: OK
-     *        400:
-     *          description: Bad Request
-     */
-    app.post('/api/hoteltime', async (req: Request, res: Response) => {
-        log.info(`POST /hoteltime`);
+    app.use('/', router(as));
+    app.get('/healthz', checkHealth(serverStatus));
 
-        const b = req.body;
-
-        // TODO - nejspis asynchronne, zalezi v jakem kroku rekneme OK
-        await as.receive(b);
-
-        res.sendStatus(200);
-    });
-
-    const options = {
-        swaggerDefinition: {
-            openapi: '3.0.0',
-            info: {
-                title: 'IVO',
-                version: '0.0.0',
-            },
-        },
-        apis: [__filename],
-    };
-
-    const specs = swaggerJsdoc(options);
-
-    app.use('/api/docs', serve, setup(specs));
+    const specs = swaggerJsdoc(swagger.options);
+    app.use(swagger.url, serve, setup(specs));
 };

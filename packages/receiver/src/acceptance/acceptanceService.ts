@@ -1,4 +1,4 @@
-import {ReceiverRepo} from 'database';
+import {MessageRepo} from 'database';
 import {Queue} from 'bullmq';
 import {log, loggerAls} from '../logger';
 import {Queues, uuid, WithDatatypeSchema} from 'common';
@@ -8,7 +8,7 @@ import {Queues, uuid, WithDatatypeSchema} from 'common';
  * @param personalisationQueue The queue for the personalisation service.
  * @returns The acceptance service.
  */
-export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queue<Queues['personalisation']['jobData']>) => {
+export const acceptanceService = (msgRepo: MessageRepo, personalisationQueue: Queue<Queues['personalisation']['jobData']>) => {
     return {
         receive: async (data: unknown) => {
             log.info(`receive`);
@@ -18,10 +18,7 @@ export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queu
 
             log.info(`alsRequestId: ${requestId}, queue requestId: ${requestId}`);
 
-            // await repo.rawSave(data);
-            // await repo.rawSaveGrid(data);
-
-            await repo.chunkSave(data);
+            const save = await msgRepo.chunkSave(data);
 
             const parse = WithDatatypeSchema.safeParse(data);
 
@@ -32,6 +29,7 @@ export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queu
                     datatype: parse.data.datatype,
                     requestId,
                     data: parse.data,
+                    databaseId: save.insertedId.toString(),
                 });
             } else {
                 log.info(`unknown 'datatype' detected`);
@@ -46,3 +44,5 @@ export const acceptanceService = (repo: ReceiverRepo, personalisationQueue: Queu
         },
     };
 };
+
+export type AcceptanceService = ReturnType<typeof acceptanceService>;
