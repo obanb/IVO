@@ -56,7 +56,12 @@ BullMQ was chosen as message broker - because of good compatibility with Node.js
  - possible to monitor/resend communication via GUI on **/bull/admin** URL from Receiver HTTP server  
 
 **Logging**
-TBD
+
+- combination of Node.js AsyncLocalStorage (Als) and winstonjs logger
+- entering the application on the HTTP server side, a new branch of the asynchronous Als runtime is created, which holds context(requestId) across the entire flow of the package
+- then the context (requestId) is passed through the queue and workers to other applications, which create a new asynchronous flow with the original requestId
+- example: http post > receiver package > express > requestId > als run > queue with requestId > personalisation package > worker subscribe > als run > requestId > logger with requestId
+
 
 ## App schema
 TODO
@@ -66,7 +71,12 @@ use https://swagger.io/ as HTTP API browser
  - URL: **/api/docs** 
 ## Install, run, cmds, scripts..
 
-TODO.
+- git clone
+- yarn install (install npm packages)
+- yarn run devel:build (build all packages (npx lerna run build))
+- cd packages/xxx 
+- create + fill .env file (system variables, secrets)  
+- yarn run start
 
 ## Deploy, CI, GIT
 
