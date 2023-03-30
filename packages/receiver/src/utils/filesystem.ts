@@ -2,11 +2,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {log} from '../logger';
 
-const STORAGE_URL = 'xxx';
 const OUTPUT_DIR = 'output';
-const FILENAME_PREFIX = 'test';
+const MODIFIED_OUTPUT_DIR = 'output/modified';
+const FILENAME_PREFIX = 'BookingStatus';
 
-const generateFileName = (prefix: string, type: string) => {
+const generateFileName = (prefix: string, datatype: string, inc: number) => {
     const now = new Date();
     const dateStr = `${now.getUTCFullYear()}${(now.getUTCMonth() + 1).toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}`;
     const timeStr = `${now.getUTCHours().toString().padStart(2, '0')}-${now.getUTCMinutes().toString().padStart(2, '0')}-${now
@@ -14,26 +14,28 @@ const generateFileName = (prefix: string, type: string) => {
         .toString()
         .padStart(2, '0')}`;
 
-    const filename = `${prefix}_${type}_${dateStr}-${timeStr}-${'NEJAKY_ID'}.json`;
+    const filename = `${prefix}_${datatype}_${dateStr}-${timeStr}-${inc}.json`;
 
     return filename;
 };
 
-const saveFile = async (data: unknown, filename?: string) => {
-    const fname = filename ?? generateFileName(FILENAME_PREFIX, 'test');
-    const fullFilePath = path.join(OUTPUT_DIR, fname);
+const saveFile = async (data: unknown, datatype: string) => {
+    let DIR = OUTPUT_DIR;
 
-    if (fs.existsSync(fullFilePath)) {
-        log.error(`File ${filename} already exists in folder ${OUTPUT_DIR}`);
-        // TODO - zkusit vyssi cislo
-        return;
+    if (datatype === 'modified') {
+        DIR = MODIFIED_OUTPUT_DIR;
     }
 
-    try {
-        await fs.promises.writeFile(fullFilePath, OUTPUT_DIR);
-        log.info(`File ${filename} saved to folder ${OUTPUT_DIR}`);
-    } catch (error) {
-        log.error(`Error saving file ${filename} to folder ${OUTPUT_DIR}: ${error}`);
+    for (let i = 0; ; ++i) {
+        const filename = generateFileName(FILENAME_PREFIX, datatype, i);
+        const fullFilePath = path.join(DIR, filename);
+
+        if (!fs.existsSync(fullFilePath)) {
+            await fs.promises.writeFile(fullFilePath, DIR);
+            break;
+        } else {
+            log.error(`File ${filename} already exists in folder ${DIR}, trying next inc: ${i + 1}`);
+        }
     }
 };
 

@@ -2,11 +2,12 @@ import {Job, Worker} from 'bullmq';
 import {log, loggerAls} from '../logger';
 import {Queues} from 'common';
 import {AckRepo} from 'database';
-import {ObjectId} from 'mongodb';
+import {mystayService} from '../mystay';
 
 const redisCfg = {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PSWD,
 };
 
 export const bullmq = {
@@ -23,11 +24,10 @@ export const bullmq = {
                 const requestId = job.data.requestId;
 
                 await loggerAls.run({requestId}, async () => {
-                    // TODO - logovat 15MB zrejme chtit nebudu
-                    log.info(`MQ msg received: ${JSON.stringify(job.data)}`);
                     log.info(`MQ msg requestId: ${requestId}`);
+                    log.info(`MQ msg received: ${JSON.stringify(job.data)}`);
 
-                    await repo.ackPersonalisation(new ObjectId(job.data.databaseId));
+                    await mystayService(repo).call(job.data.data, job.data.databaseId);
                 });
                 return 'ok';
             },
@@ -36,6 +36,7 @@ export const bullmq = {
                 connection: {
                     host: redisCfg.host,
                     port: parseInt(redisCfg.port!),
+                    password: redisCfg.password,
                 },
                 autorun: true,
             },

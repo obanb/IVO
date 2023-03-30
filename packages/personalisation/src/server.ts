@@ -12,12 +12,13 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const databaseUri = process.env.DATABASE_URI;
 
 const serverStatus: ServerStatus = {isAlive: true, server: undefined};
 
 export const startServer = async () => {
     // db init
-    const cosmosDbClient = connect.getDbClient().cosmosDb();
+    const cosmosDbClient = connect.getDbClient().cosmosDb(databaseUri!);
     const client = await cosmosDbClient.connect();
     const db = client.db('orea');
 

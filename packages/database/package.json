@@ -15,14 +15,12 @@
   "types": "./lib/types/database.d.ts",
   "typings": "./lib/types/database.d.ts",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "lib": "lib"
   },
   "files": [
     "lib"
   ],
   "scripts": {
-    "test": "node ./__tests__/database.test.js",
     "build": "tsc",
     "lint-only": "eslint --quiet --ext .ts src/"
   },

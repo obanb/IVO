@@ -9,8 +9,7 @@ import {BullMQAdapter} from '@bull-board/api/bullMQAdapter';
 import {checkHealth, Queues, ServerStatus, withGracefulShutdown} from 'common';
 import {serve, setup} from 'swagger-ui-express';
 import {Server} from 'node:http';
-import {swagger} from './swagger';
-import {router} from './router';
+import {router, swagger} from './api';
 
 const swaggerJsdoc = require('swagger-jsdoc');
 
@@ -21,10 +20,12 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const databaseUri = process.env.DATABASE_URI;
 
 const redisCfg = {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PSWD,
 };
 
 const bullAdminRoute = '/bull/admin';
@@ -33,7 +34,7 @@ const serverStatus: ServerStatus = {isAlive: true, server: undefined};
 
 export const startServer = async () => {
     // db init
-    const cosmosDbClient = connect.getDbClient().cosmosDb();
+    const cosmosDbClient = connect.getDbClient().cosmosDb(databaseUri!);
     const client = await cosmosDbClient.connect();
     const db = client.db('orea');
 
@@ -42,6 +43,7 @@ export const startServer = async () => {
         connection: {
             host: redisCfg.host,
             port: parseInt(redisCfg.port!),
+            password: redisCfg.password,
         },
     });
 

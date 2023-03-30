@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "start": "tsc && node --trace-warnings --enable-source-maps lib/receiver.js",
-    "test": "node ./__tests__/receiver.test.js",
+    "test": "jest --verbose --colors --runInBand --no-cache",
     "lint-only": "eslint --quiet --ext .ts src/"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "redis": "^4.6.5",
+    "ssh2": "^1.11.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2",
     "zod": "^3.21.4"
