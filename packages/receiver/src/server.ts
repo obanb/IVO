@@ -6,7 +6,7 @@ import {randomUUID} from 'crypto';
 import {ExpressAdapter} from '@bull-board/express';
 import {createBullBoard} from '@bull-board/api';
 import {BullMQAdapter} from '@bull-board/api/bullMQAdapter';
-import {checkHealth, Queues, ServerStatus, withGracefulShutdown} from 'common';
+import {basicAuth, checkHealth, Queues, ServerStatus, withGracefulShutdown} from 'common';
 import {serve, setup} from 'swagger-ui-express';
 import {Server} from 'node:http';
 import {router, swagger} from './api';
@@ -28,9 +28,17 @@ const redisCfg = {
     password: process.env.REDIS_PSWD,
 };
 
+const adminCredentials = {
+    username: process.env.ADMIN_USERNAME!,
+    password: process.env.ADMIN_PASSWORD!,
+}
+
 const bullAdminRoute = '/bull/admin';
 
 const serverStatus: ServerStatus = {isAlive: true, server: undefined};
+
+const basicAuthMiddleware = basicAuth(adminCredentials);
+
 
 export const startServer = async () => {
     // db init
@@ -69,7 +77,7 @@ export const startServer = async () => {
         serverAdapter: serverAdapter,
     });
 
-    app.use(bullAdminRoute, serverAdapter.getRouter());
+    app.use(bullAdminRoute, basicAuthMiddleware, serverAdapter.getRouter());
 
     app.use(
         loggerAls.expressHook(() => {
