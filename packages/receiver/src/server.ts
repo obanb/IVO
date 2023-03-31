@@ -33,7 +33,7 @@ const adminCredentials = {
     password: process.env.ADMIN_PASSWORD!,
 }
 
-const bullAdminRoute = '/bull/admin';
+const bullAdminRoute = '/api/service/bull/admin';
 
 const serverStatus: ServerStatus = {isAlive: true, server: undefined};
 
