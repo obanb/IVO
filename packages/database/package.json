@@ -22,7 +22,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint-only": "eslint --quiet --ext .ts src/"
+    "lint-only": "eslint --quiet --ext .ts src/",
+    "test": "jest --verbose --colors --runInBand --no-cache"
   },
   "dependencies": {
     "common": "^0.0.0",

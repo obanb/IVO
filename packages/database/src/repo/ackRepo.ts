@@ -32,7 +32,7 @@ export const ackRepo = (db: Db): AckRepo => {
             return !!upd.ok;
         },
         nack: async (id: ObjectId, error: string) => {
-            const upd = await messageColl.findOneAndUpdate({_id: id}, {$push: {errors: error}, $set: {error: true}});
+            const upd = await messageColl.findOneAndUpdate({_id: id}, {$push: {errors: error.slice(0, 1000)}, $set: {error: true}});
             return !!upd.ok;
         },
     };

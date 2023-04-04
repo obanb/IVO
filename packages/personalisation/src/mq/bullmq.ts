@@ -19,13 +19,12 @@ export const bullmq = {
         const pw = new Worker(
             queueName,
             async (job: Job<Queues['personalisation']['jobData'], string>) => {
-                log.info(`MQ msg received: ${JSON.stringify(job.data)}`);
+                log.info(`MQ msg received: ${JSON.stringify(job.data.databaseId)}`);
 
                 const requestId = job.data.requestId;
 
                 await loggerAls.run({requestId}, async () => {
-                    log.info(`MQ msg requestId: ${requestId}`);
-                    log.info(`MQ msg received: ${JSON.stringify(job.data)}`);
+                    log.info(`MQ msg requestId: ${requestId}, running at als context`);
 
                     await mystayService(repo).call(job.data.data, job.data.databaseId);
                 });

@@ -1,4 +1,3 @@
-import {Request, Response} from 'express';
 import {log} from './logger';
 import {Server} from 'node:http';
 import {checkHealth, ServerStatus, withGracefulShutdown} from 'common';
@@ -33,10 +32,6 @@ export const startServer = async () => {
     const {personalisationWorker} = await bullmq.subscribe(repo);
 
     app.use(express.json());
-
-    app.get('/', (req: Request, res: Response) => {
-        res.send('Express + TypeScript Server');
-    });
 
     app.get('/healthz', checkHealth(serverStatus));
 

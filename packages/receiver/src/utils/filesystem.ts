@@ -31,7 +31,7 @@ const saveFile = async (data: unknown, datatype: string) => {
         const fullFilePath = path.join(DIR, filename);
 
         if (!fs.existsSync(fullFilePath)) {
-            await fs.promises.writeFile(fullFilePath, DIR);
+            await fs.promises.writeFile(fullFilePath, JSON.stringify(data));
             break;
         } else {
             log.error(`File ${filename} already exists in folder ${DIR}, trying next inc: ${i + 1}`);

@@ -24,7 +24,7 @@ export const messageRepo = (db: Db): MessageRepo => {
     const messageChunkColl = db.collection<SortedMessageChunk>(messageChunksCollectionName);
 
     async function getNextMsgValue() {
-        const result = await counterColl.findOneAndUpdate({}, {$inc: {sequence_value: 1}}, {upsert: true, returnDocument: 'after'});
+        const result = await counterColl.findOneAndUpdate({}, {$inc: {msgNumber: 1}}, {upsert: true, returnDocument: 'after'});
 
         return result.value?.msgNumber ?? 0;
     }

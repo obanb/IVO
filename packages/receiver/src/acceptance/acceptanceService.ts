@@ -1,4 +1,4 @@
-import {MessageRepo} from 'database';
+import {AckRepo, MessageRepo} from 'database';
 import {Queue} from 'bullmq';
 import {log, loggerAls} from '../logger';
 import {Queues, uuid, WithDatatypeSchema} from 'common';
@@ -9,7 +9,7 @@ import {fileSystem} from '../utils';
  * @param personalisationQueue The queue for the personalisation service.
  * @returns The acceptance service.
  */
-export const acceptanceService = (msgRepo: MessageRepo, personalisationQueue: Queue<Queues['personalisation']['jobData']>) => {
+export const acceptanceService = (msgRepo: MessageRepo, ackRepo: AckRepo, personalisationQueue: Queue<Queues['personalisation']['jobData']>) => {
     return {
         addToQueueByNumber: async (msgNumber: number) => {
             const item = await msgRepo.getByMsgNumber(msgNumber);
@@ -66,6 +66,8 @@ export const acceptanceService = (msgRepo: MessageRepo, personalisationQueue: Qu
 
             log.info(`alsRequestId: ${requestId}, queue requestId: ${requestId}`);
 
+            log.info(`alsRequestId: ${requestId}, queue requestId: ${requestId}`);
+
             const parse = WithDatatypeSchema.safeParse(data);
 
             if (parse.success) {
@@ -81,6 +83,8 @@ export const acceptanceService = (msgRepo: MessageRepo, personalisationQueue: Qu
                 });
 
                 await fileSystem.saveFile(data, parse.data.datatype);
+
+                await ackRepo.ackFs(save.insertedId);
             } else {
                 log.info(`unknown 'datatype' detected`);
 
@@ -94,6 +98,8 @@ export const acceptanceService = (msgRepo: MessageRepo, personalisationQueue: Qu
                 });
 
                 await fileSystem.saveFile(data, 'unknown');
+
+                await ackRepo.ackFs(save.insertedId);
             }
         },
     };

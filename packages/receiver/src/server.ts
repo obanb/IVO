@@ -1,4 +1,4 @@
-import {connect, messageRepo} from 'database';
+import {ackRepo, connect, messageRepo} from 'database';
 import {acceptanceService} from './acceptance';
 import {Queue} from 'bullmq';
 import {log, loggerAls} from './logger';
@@ -31,14 +31,13 @@ const redisCfg = {
 const adminCredentials = {
     username: process.env.ADMIN_USERNAME!,
     password: process.env.ADMIN_PASSWORD!,
-}
+};
 
 const bullAdminRoute = '/api/service/bull/admin';
 
 const serverStatus: ServerStatus = {isAlive: true, server: undefined};
 
 const basicAuthMiddleware = basicAuth(adminCredentials);
-
 
 export const startServer = async () => {
     // db init
@@ -56,7 +55,8 @@ export const startServer = async () => {
     });
 
     const msgRepo = messageRepo(db);
-    const as = acceptanceService(msgRepo, personalisationQueue);
+    const acknowledgeRepo = ackRepo(db);
+    const as = acceptanceService(msgRepo, acknowledgeRepo, personalisationQueue);
 
     serverStatus.server = await new Promise<Server>((resolve) => {
         const httpServer = app.listen(port, () => {
