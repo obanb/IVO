@@ -13,9 +13,9 @@ const summaryPipeline = [
         $group: {
             _id: null,
             totalCount: {$sum: 1},
-            ack: {
+            personalisation: {
                 $sum: {
-                    $cond: ['$ack', 1, 0],
+                    $cond: ['$personalisation', 1, 0],
                 },
             },
             fs: {
@@ -23,20 +23,26 @@ const summaryPipeline = [
                     $cond: ['$fs', 1, 0],
                 },
             },
-            ods: {
+            mystay: {
                 $sum: {
-                    $cond: ['$ods', 1, 0],
+                    $cond: ['$mystat', 1, 0],
                 },
             },
+            error: {
+                $sum: {
+                    $cond: ['$error', 1, 0],
+                }
+            }
         },
     },
     {
         $project: {
             _id: 0,
             totalCount: 1,
-            ack: 1,
+            personalisation: 1,
             fs: 1,
-            ods: 1,
+            mystay: 1,
+            error: 1
         },
     },
 ];

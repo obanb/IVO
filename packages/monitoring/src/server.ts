@@ -23,10 +23,6 @@ export const startServer = async () => {
 
     app.use(express.json());
 
-    app.get('/hello', (req: Request, res: Response) => {
-        res.send('hello from monitoring package');
-    });
-
     app.get('/totalSummary', async (req: Request, res: Response) => {
         const summary = await monRepo.totalSummary();
         res.send(summary);
